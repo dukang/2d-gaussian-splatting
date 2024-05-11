@@ -95,7 +95,11 @@ __device__ bool computeTransMat(const glm::vec3 &p_world, const glm::vec4 &quat,
 	glm::mat3 R = quat_to_rotmat(quat) * scale_to_mat({scale.x, scale.y, 1.0f}, 1.0f);
 	glm::mat3 M = glm::mat3(W * R[0], W * R[1], p_view);
 	glm::vec3 tn = W*R[2];
+	// glm::vec3 tn = R[2];
+	// glm::vec3 view_direction = cam_pos - p_world; 
+	// view_direction = glm::normalize(view_direction);
 	float cos = glm::dot(-tn, p_view);
+	// float cos = glm::dot(tn, view_direction);
 
 #if BACKFACE_CULL
 	if (cos == 0.0f) return false;

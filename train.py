@@ -76,7 +76,7 @@ def training(
         if not viewpoint_stack:
             viewpoint_stack = scene.getTrainCameras().copy()
         viewpoint_cam = viewpoint_stack.pop(randint(0, len(viewpoint_stack) - 1))
-
+        
         render_pkg = render(viewpoint_cam, gaussians, pipe, background)
         image, viewspace_point_tensor, visibility_filter, radii = (
             render_pkg["render"],
@@ -99,16 +99,19 @@ def training(
         lambda_dist = opt.lambda_dist if iteration > 3000 else 0.0
         # lambda_dist = 0.0
 
-        rend_dist = render_pkg["rend_dist"]
+        # rend_dist = render_pkg["rend_dist"]
+        rend_dist = render_pkg['render_depth_expected']
+
         rend_normal = render_pkg["rend_normal"]
         surf_normal = render_pkg["surf_normal"]
         normal_error = (1 - (rend_normal * gt_image_normal).sum(dim=0))[None]
         normal_error2 = (1 - (rend_normal * surf_normal).sum(dim=0))[None]
 
         normal_loss = lambda_normal * (normal_error).mean()
+        dist_loss = lambda_dist * (l1_loss(rend_dist, gt_image_depth))
         # normal_loss2 = lambda_normal * (normal_error2).mean()
 
-        dist_loss = lambda_dist * (rend_dist).mean()
+        # dist_loss = lambda_dist * (rend_dist).mean()
 
         # loss
         total_loss = loss + dist_loss + normal_loss
