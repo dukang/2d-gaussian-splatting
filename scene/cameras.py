@@ -61,10 +61,10 @@ class Camera(nn.Module):
         normal_map_flat = normal_map_flat * 2 -1
 
         # 应用旋转矩阵self.R到每一个法线向量
-        # rotated_normal_flat = torch.matmul(torch.tensor(self.R.transpose(), dtype=torch.float32), normal_map_flat)
+        rotated_normal_flat = torch.matmul(torch.tensor(self.R.transpose(), dtype=torch.float32), normal_map_flat)
 
         # 将旋转后的法线图维度变回(3, 600, 800)
-        rotated_normal_map = normal_map_flat.view(3, 832, 1264)
+        rotated_normal_map = rotated_normal_flat.view(3, 546, 979)
 
         # 将值限制在[0.0, 1.0]之间，并转移到指定的设备
         self.original_normal = (rotated_normal_map).to(self.data_device)
