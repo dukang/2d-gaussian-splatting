@@ -504,7 +504,8 @@ inline __device__ void computeTransMat(
 	glm::vec3 dL_dRS0 = dL_dRS[0];
 	glm::vec3 dL_dRS1 = dL_dRS[1];
 	glm::vec3 dL_dpw = dL_dRS[2];
-	glm::vec3 dL_dtn = W_t * glm::vec3(dL_dnormal3D[0], dL_dnormal3D[1], dL_dnormal3D[2]);
+	// glm::vec3 dL_dtn = W_t * glm::vec3(dL_dnormal3D[0], dL_dnormal3D[1], dL_dnormal3D[2]);
+	glm::vec3 dL_dtn = glm::vec3(dL_dnormal3D[0], dL_dnormal3D[1], dL_dnormal3D[2]);
 
 #if DUAL_VISIABLE
 	glm::vec3 tn = W*R[2];
