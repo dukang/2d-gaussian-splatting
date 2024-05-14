@@ -254,7 +254,12 @@ def readCamerasFromTransforms(path, transformsfile, white_background, extension=
 
             image_path = os.path.join(path, cam_name)
             image_name = Path(cam_name).stem
+            image_depth_path = os.path.join(path, image_name + "_depth.png")
+            image_normal_path = os.path.join(path, image_name + "_normal.png")
+
             image = Image.open(image_path)
+            image_depth = Image.open(image_depth_path)
+            image_normal = Image.open(image_normal_path)
 
             im_data = np.array(image.convert("RGBA"))
 
