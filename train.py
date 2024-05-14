@@ -102,7 +102,7 @@ def training(
         # rend_dist = render_pkg["render_depth_expected"]
 
         rend_normal = render_pkg["rend_normal"]
-        # surf_normal = render_pkg["surf_normal"]
+        surf_normal = render_pkg["surf_normal"]
         normal_error = torch.abs((1 - (rend_normal * gt_image_normal).sum(dim=0))[None])
         # normal_error2 = (1 - (rend_normal * surf_normal).sum(dim=0))[None]
 
@@ -366,8 +366,12 @@ if __name__ == "__main__":
     parser.add_argument("--port", type=int, default=6009)
     parser.add_argument("--detect_anomaly", action="store_true", default=False)
     parser.add_argument(
-        "--test_iterations", nargs="+", type=int, default=[7_000, 15_000, 30_000]
+        "--test_iterations",
+        nargs="+",
+        type=int,
+        default=[7_000, 15_000, 20_000, 25_000, 30_000],
     )
+
     parser.add_argument(
         "--save_iterations", nargs="+", type=int, default=[7_000, 30_000]
     )
