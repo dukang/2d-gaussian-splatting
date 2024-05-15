@@ -53,10 +53,10 @@ class ParamGroup:
 
 class ModelParams(ParamGroup):
     def __init__(self, parser, sentinel=False):
-        self.sh_degree = 3
+        self.sh_degree = 0
         self._source_path = ""
         self._model_path = ""
-        self._images = "images_4"
+        self._images = "images"
         self._resolution = -1
         self._white_background = False
         self.data_device = "cuda"
@@ -91,7 +91,7 @@ class OptimizationParams(ParamGroup):
         self.rotation_lr = 0.001
         self.percent_dense = 0.01
         self.lambda_dssim = 0.2
-        self.lambda_dist = 100.0
+        self.lambda_dist = 500.0
         # self.lambda_dist = 0.00025
         self.lambda_normal = 0.05
         self.opacity_cull = 0.05

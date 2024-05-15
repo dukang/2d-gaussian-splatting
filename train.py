@@ -12,7 +12,7 @@
 import os
 import torch
 from random import randint
-from utils.loss_utils import l1_loss, ssim
+from utils.loss_utils import dot_loss, l1_loss, ssim
 from gaussian_renderer import render, network_gui
 import sys
 from scene import Scene, GaussianModel
@@ -89,7 +89,9 @@ def training(
         gt_image_normal = viewpoint_cam.original_normal.cuda()
         gt_image_depth = viewpoint_cam.original_depth.cuda()
 
-        Ll1 = l1_loss(image, gt_image)
+        # Ll1 = l1_loss(image, gt_image)
+        Ll1 = dot_loss(image, gt_image)
+
         loss = (1.0 - opt.lambda_dssim) * Ll1 + opt.lambda_dssim * (
             1.0 - ssim(image, gt_image)
         )

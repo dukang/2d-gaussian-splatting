@@ -114,6 +114,7 @@ def readColmapCameras(cam_extrinsics, cam_intrinsics, images_folder):
 
         image_depth_path = os.path.join(images_folder, image_name + "_depth.png")
         image_normal_path = os.path.join(images_folder, image_name + "_normal.png")
+        image_path = os.path.join(images_folder, image_name + "_albedo.png")
 
         image = Image.open(image_path)
         image_depth = Image.open(image_depth_path)

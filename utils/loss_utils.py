@@ -17,6 +17,15 @@ from math import exp
 def l1_loss(network_output, gt):
     return torch.abs((network_output - gt)).mean()
 
+def dot_loss(network_output, gt):
+    # 对network_output和gt进行L2范数标准化
+    network_output_normalized = F.normalize(network_output, dim=0)
+    gt_normalized = F.normalize(gt, dim=0)
+    
+    # 计算标准化后的向量的点积损失
+    loss = torch.abs((1 - (network_output_normalized * gt_normalized).sum(dim=0))[None]).mean()
+    
+    return loss
 def l2_loss(network_output, gt):
     return ((network_output - gt) ** 2).mean()
 
