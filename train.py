@@ -114,7 +114,7 @@ def training(
 
         # loss
         # total_loss = loss + normal_loss
-        total_loss = loss + dist_loss + normal_loss
+        total_loss = loss + normal_loss
 
         total_loss.backward()
 
