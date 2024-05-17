@@ -60,6 +60,10 @@ def loadCam(args, id, cam_info, resolution_scale):
         resized_image_normal = PILtoTorch(cam_info.image_normal, resolution)
         gt_image_normal = resized_image_normal
 
+        resized_image_rough = PILtoTorch(cam_info.image_rough, resolution)
+        gt_image_rough = resized_image_rough
+        resized_image_metal = PILtoTorch(cam_info.image_metal, resolution)
+        gt_image_metal = resized_image_metal
     return Camera(
         colmap_id=cam_info.uid,
         R=cam_info.R,
@@ -69,6 +73,8 @@ def loadCam(args, id, cam_info, resolution_scale):
         image=gt_image,
         image_normal=gt_image_normal,
         image_depth=gt_image_depth,
+        image_rough=gt_image_rough,
+        image_metal=gt_image_metal,
         gt_alpha_mask=loaded_mask,
         image_name=cam_info.image_name,
         uid=id,

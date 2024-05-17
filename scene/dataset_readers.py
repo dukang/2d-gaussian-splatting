@@ -40,6 +40,8 @@ class CameraInfo(NamedTuple):
     image: np.array
     image_normal: np.array
     image_depth: np.array
+    image_rough: np.array
+    image_metal: np.array
     image_path: str
     image_name: str
     width: int
@@ -114,10 +116,14 @@ def readColmapCameras(cam_extrinsics, cam_intrinsics, images_folder):
 
         image_depth_path = os.path.join(images_folder, image_name + "_depth.png")
         image_normal_path = os.path.join(images_folder, image_name + "_normal.png")
+        image_rough_path = os.path.join(images_folder, image_name + "_roughness.png")
+        image_metal_path = os.path.join(images_folder, image_name + "_metal.png")
 
         image = Image.open(image_path)
         image_depth = Image.open(image_depth_path)
         image_normal = Image.open(image_normal_path)
+        image_rough = Image.open(image_rough_path)
+        image_metal = Image.open(image_metal_path)
 
         cam_info = CameraInfo(
             uid=uid,
@@ -128,6 +134,8 @@ def readColmapCameras(cam_extrinsics, cam_intrinsics, images_folder):
             image=image,
             image_normal=image_normal,
             image_depth=image_depth,
+            image_rough=image_rough,
+            image_metal=image_metal,
             image_path=image_path,
             image_name=image_name,
             width=width,

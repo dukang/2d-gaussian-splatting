@@ -88,6 +88,8 @@ def training(
         gt_image = viewpoint_cam.original_image.cuda()
         gt_image_normal = viewpoint_cam.original_normal.cuda()
         gt_image_depth = viewpoint_cam.original_depth.cuda()
+        gt_image_rough = viewpoint_cam.original_rough.cuda()
+        gt_image_metal = viewpoint_cam.original_metal.cuda()
 
         Ll1 = l1_loss(image, gt_image)
         loss = (1.0 - opt.lambda_dssim) * Ll1 + opt.lambda_dssim * (
@@ -96,6 +98,7 @@ def training(
 
         # regularization
         lambda_normal = opt.lambda_normal if iteration > 7000 else 0.0
+        # lambda_normal = (((1-gt_image_rough)*gt_image_metal)*0.5).mean() if iteration > 7000 else 0.0
         lambda_dist = opt.lambda_dist if iteration > 3000 else 0.0
 
         rend_dist = render_pkg["rend_dist"]
@@ -104,9 +107,13 @@ def training(
         rend_normal = render_pkg["rend_normal"]
         surf_normal = render_pkg["surf_normal"]
         normal_error = torch.abs((1 - (rend_normal * gt_image_normal).sum(dim=0))[None])
+        normal_error = (
+            normal_error
+            * 10
+            * torch.clamp(((1 - gt_image_rough) * gt_image_metal), 0.1, 1.0)
+        )
         # normal_error2 = (1 - (rend_normal * surf_normal).sum(dim=0))[None]
-
-        normal_loss = lambda_normal * (normal_error).mean()
+        normal_loss = (lambda_normal) * (normal_error).mean()
         # normal_loss2 = lambda_normal * (normal_error2).mean()
 
         # dist_loss = lambda_dist * (l1_loss(rend_dist, gt_image_depth))

@@ -27,6 +27,8 @@ class Camera(nn.Module):
         image,
         image_normal,
         image_depth,
+        image_rough,
+        image_metal,
         gt_alpha_mask,
         image_name,
         uid,
@@ -56,6 +58,8 @@ class Camera(nn.Module):
         self.original_image = image.clamp(0.0, 1.0).to(self.data_device)
 
         self.original_depth = image_depth.clamp(0.0, 1.0).to(self.data_device)
+        self.original_rough = image_rough.clamp(0.0, 1.0).to(self.data_device)
+        self.original_metal = image_metal.clamp(0.0, 1.0).to(self.data_device)
 
         self.image_width = self.original_image.shape[2]
         self.image_height = self.original_image.shape[1]
