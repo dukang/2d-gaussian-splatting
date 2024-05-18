@@ -80,7 +80,7 @@ def getNerfppNorm(cam_info):
     return {"translate": translate, "radius": radius}
 
 
-def readColmapCameras(cam_extrinsics, cam_intrinsics, images_folder):
+def readColmapCameras(cam_extrinsics, cam_intrinsics, images_folder, loadMat):
     cam_infos = []
     for idx, key in enumerate(cam_extrinsics):
         sys.stdout.write("\r")
@@ -122,8 +122,14 @@ def readColmapCameras(cam_extrinsics, cam_intrinsics, images_folder):
         image = Image.open(image_path)
         image_depth = Image.open(image_depth_path)
         image_normal = Image.open(image_normal_path)
-        image_rough = Image.open(image_rough_path)
-        image_metal = Image.open(image_metal_path)
+        if loadMat:
+            if os.path.exists(image_rough_path):
+                image_rough = Image.open(image_rough_path)
+            if os.path.exists(image_metal_path):
+                image_metal = Image.open(image_metal_path)
+        else:
+            image_rough = np.empty(0)
+            image_metal = np.empty(0)
 
         cam_info = CameraInfo(
             uid=uid,
@@ -181,7 +187,7 @@ def storePly(path, xyz, rgb):
     ply_data.write(path)
 
 
-def readColmapSceneInfo(path, images, eval, llffhold=8):
+def readColmapSceneInfo(path, images, eval, llffhold=8, loadMat=False):
     try:
         cameras_extrinsic_file = os.path.join(path, "sparse/0", "images.bin")
         cameras_intrinsic_file = os.path.join(path, "sparse/0", "cameras.bin")
@@ -198,6 +204,7 @@ def readColmapSceneInfo(path, images, eval, llffhold=8):
         cam_extrinsics=cam_extrinsics,
         cam_intrinsics=cam_intrinsics,
         images_folder=os.path.join(path, reading_dir),
+        loadMat=loadMat,
     )
     cam_infos = sorted(cam_infos_unsorted.copy(), key=lambda x: x.image_name)
 
@@ -301,7 +308,9 @@ def readCamerasFromTransforms(path, transformsfile, white_background, extension=
     return cam_infos
 
 
-def readNerfSyntheticInfo(path, white_background, eval, extension=".png"):
+def readNerfSyntheticInfo(
+    path, white_background, eval, extension=".png", loadMat=False
+):
     print("Reading Training Transforms")
     train_cam_infos = readCamerasFromTransforms(
         path, "transforms_train.json", white_background, extension

@@ -56,10 +56,11 @@ class Camera(nn.Module):
             self.data_device = torch.device("cuda")
 
         self.original_image = image.clamp(0.0, 1.0).to(self.data_device)
-
+        # self.original_image = self.srgb_to_linear(self.original_image)
         self.original_depth = image_depth.clamp(0.0, 1.0).to(self.data_device)
-        self.original_rough = image_rough.clamp(0.0, 1.0).to(self.data_device)
-        self.original_metal = image_metal.clamp(0.0, 1.0).to(self.data_device)
+        if image_rough.shape[0] > 0:
+            self.original_rough = image_rough.clamp(0.0, 1.0).to(self.data_device)
+            self.original_metal = image_metal.clamp(0.0, 1.0).to(self.data_device)
 
         self.image_width = self.original_image.shape[2]
         self.image_height = self.original_image.shape[1]
@@ -131,6 +132,13 @@ class Camera(nn.Module):
             )
         ).squeeze(0)
         self.camera_center = self.world_view_transform.inverse()[3, :3]
+
+    def srgb_to_linear(self, c_srgb):
+        # 对每个颜色分量进行逆伽马校正
+        c_linear = torch.where(
+            c_srgb <= 0.04045, c_srgb / 12.92, ((c_srgb + 0.055) / 1.055) ** 2.4
+        )
+        return c_linear
 
 
 class MiniCam:

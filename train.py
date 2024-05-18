@@ -31,6 +31,16 @@ except ImportError:
     TENSORBOARD_FOUND = False
 
 
+def linear_to_srgb(c_linear):
+    # 应用 sRGB 的逆伽马校正
+    c_srgb = torch.where(
+        c_linear <= 0.0031308,
+        c_linear * 12.92,
+        1.055 * torch.pow(c_linear, 1 / 2.4) - 0.055,
+    )
+    return c_srgb
+
+
 def training(
     dataset,
     opt,
@@ -87,9 +97,11 @@ def training(
 
         gt_image = viewpoint_cam.original_image.cuda()
         gt_image_normal = viewpoint_cam.original_normal.cuda()
-        gt_image_depth = viewpoint_cam.original_depth.cuda()
-        gt_image_rough = viewpoint_cam.original_rough.cuda()
-        gt_image_metal = viewpoint_cam.original_metal.cuda()
+        # gt_image_depth = viewpoint_cam.original_depth.cuda()
+        # gt_image_rough = viewpoint_cam.original_rough.cuda()
+        # gt_image_metal = viewpoint_cam.original_metal.cuda()
+
+        # image = linear_to_srgb(image)
 
         Ll1 = l1_loss(image, gt_image)
         loss = (1.0 - opt.lambda_dssim) * Ll1 + opt.lambda_dssim * (
@@ -107,11 +119,11 @@ def training(
         rend_normal = render_pkg["rend_normal"]
         surf_normal = render_pkg["surf_normal"]
         normal_error = torch.abs((1 - (rend_normal * gt_image_normal).sum(dim=0))[None])
-        normal_error = (
-            normal_error
-            * 10
-            * torch.clamp(((1 - gt_image_rough) * gt_image_metal), 0.1, 1.0)
-        )
+        # normal_error = (
+        #     normal_error
+        #     * 10
+        #     * torch.clamp(((1 - gt_image_rough) * gt_image_metal), 0.1, 1.0)
+        # )
         # normal_error2 = (1 - (rend_normal * surf_normal).sum(dim=0))[None]
         normal_loss = (lambda_normal) * (normal_error).mean()
         # normal_loss2 = lambda_normal * (normal_error2).mean()

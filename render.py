@@ -80,10 +80,10 @@ if __name__ == "__main__":
     )
     gaussExtractor = GaussianExtractor(gaussians, render, pipe, bg_color=bg_color)
 
-    args.skip_train = True
-    args.skip_test = True
-    args.unbounded = True
-    # args.skip_mesh = True
+    # args.skip_train = True
+    # args.skip_test = True
+    # args.unbounded = True
+    args.skip_mesh = True
 
     if not args.skip_train:
         print("export training images ...")
